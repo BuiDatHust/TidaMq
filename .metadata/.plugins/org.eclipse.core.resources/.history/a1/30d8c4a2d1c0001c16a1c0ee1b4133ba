@@ -1,0 +1,10 @@
+package tidaMq;
+
+
+class main
+{
+ public static void main (String[] args)
+ {
+     
+ }
+}
