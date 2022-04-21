@@ -33,24 +33,24 @@ class main
 	}
 	
 	public static void DeleteAndUpdateToFile(File file, String s) {
-		List<String> list = ReadFromFile(file) ;
-		
 		try {
-		      FileWriter myWriter = new FileWriter(file.getPath());
-		      
-		      for(String li: list) {
-		    	  if( !li.equals(s) ) {
-		    		  System.out.println(li);
-		    		  myWriter.write(li) ;
-		    		  myWriter.write(System.lineSeparator()) ;
-		    		 
-		    	  }
-		      }
-		      myWriter.close();
-		    } catch (IOException e) {
-		      System.out.println("An error occurred.");
-		      e.printStackTrace();
-		    }
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file)) ;
+			List<String> al = (List<String>)ois.readObject() ;
+			ois.close();
+			
+			for(int i=0 ;i<al.size() ;i++) {
+				if( al.get(i)==s ) al.remove(i) ;
+			}
+			
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file)) ;
+			oos.writeObject(al);
+			oos.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		
+		
 	}
 	
 	public static List<String> ReadFromFile(File file) {

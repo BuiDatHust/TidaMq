@@ -36,17 +36,15 @@ class main
 		List<String> list = ReadFromFile(file) ;
 		
 		try {
-		      FileWriter myWriter = new FileWriter(file.getPath());
-		      
+			FileWriter fw = new FileWriter(file, true);
+		    BufferedWriter bw = new BufferedWriter(fw);
 		      for(String li: list) {
-		    	  if( !li.equals(s) ) {
-		    		  System.out.println(li);
-		    		  myWriter.write(li) ;
-		    		  myWriter.write(System.lineSeparator()) ;
-		    		 
+		    	  if( li!=s ) {
+		    		 bw.write(li);
+		    		 bw.newLine();
 		    	  }
 		      }
-		      myWriter.close();
+		      bw.close();
 		    } catch (IOException e) {
 		      System.out.println("An error occurred.");
 		      e.printStackTrace();

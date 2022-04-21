@@ -39,11 +39,8 @@ class main
 		      FileWriter myWriter = new FileWriter(file.getPath());
 		      
 		      for(String li: list) {
-		    	  if( !li.equals(s) ) {
-		    		  System.out.println(li);
+		    	  if( li!=s ) {
 		    		  myWriter.write(li) ;
-		    		  myWriter.write(System.lineSeparator()) ;
-		    		 
 		    	  }
 		      }
 		      myWriter.close();
