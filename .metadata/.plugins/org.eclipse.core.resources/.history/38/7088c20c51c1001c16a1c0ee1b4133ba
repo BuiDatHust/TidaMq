@@ -1,0 +1,81 @@
+package tidaMq;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+
+
+class main
+{
+	 public static void main (String[] args) throws IOException
+	 {
+		 File myfile = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/queue1.txt");
+		 queue q = new queue(10) ;
+		 List<String> list = new ArrayList<String>();
+		 
+		 ExecutorService executor = Executors.newCachedThreadPool();
+		 WriteToDiskThread read = new WriteToDiskThread("readDisk", myfile,"");
+		 
+		 if(!myfile.createNewFile()) {
+			 list = read.ReadFromFile(myfile);
+			 for(String s: list) {
+				 q.enqueue(s) ;
+			 }
+			 
+		 }
+		 
+		 
+	     while(true) {
+	    	 String str ;
+	    	 Scanner sc = new Scanner(System.in) ;
+	    	 str = sc.nextLine() ; 
+	    	 
+	    	 str= str.trim() ;
+	    	 String[] arg = str.split(" ") ; 
+	    	 
+	    	 switch (arg[0]) {
+				case "add":
+					q.enqueue(arg[1]);
+					Runnable writeDisk = new WriteToDiskThread("writedisk", myfile,arg[1]);
+					executor.execute(writeDisk) ;
+					break;
+				case "pop":
+					Runnable popDisk = new WriteToDiskThread("deleteDisk", myfile,"");
+					executor.execute(popDisk) ;
+					String val = q.dequeue();
+					System.out.println(val) ;
+					break;
+				case "get":
+					System.out.println(q.peek());
+					break;
+				case "list":
+					q.list();
+					break;
+				default:
+					System.out.println("Sai cú pháp, mời nhập lại");
+					break;
+			}
+	    	 
+	         // Wait until all threads are finish
+	         while (!executor.isTerminated()) {
+//	        	 System.out.println(excutor.);
+	         }
+	    	 
+	    	 
+	     }
+	 }
+}

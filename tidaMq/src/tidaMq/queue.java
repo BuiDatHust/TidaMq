@@ -4,17 +4,26 @@ public class queue {
 	 private String[] arr;      
 	 private int front;      
 	 private int rear;       
-	 private int capacity;  
-	 private int count;   
-
+	 public int capacity;  
+	 public int count;   
+	 public String name ;
+	 public boolean persistent ;
 	
-	 queue(int size)
+	 queue(int size,String n,String p)
 	 {
+		 
 	     arr = new String[size];
 	     capacity = size;
 	     front = 0;
 	     rear = -1;
 	     count = 0;
+	     name= n;
+	     persistent = p.equals("0") ? false : true ;
+	 
+	 }
+	 
+	 queue(){
+		 
 	 }
 
 	
@@ -24,7 +33,7 @@ public class queue {
 	     if (isEmpty())
 	     {
 	         System.out.println("Queue is Empty");
-	         System.exit(-1);
+	         return "";
 	     }
 
 	     String x = arr[front];
@@ -44,7 +53,7 @@ public class queue {
 	     if (isFull())
 	     {
 	         System.out.println("Queue is Full");
-	         System.exit(-1);
+	         return  ;
 	     }
 
 	     System.out.println("Inserting " + item);
@@ -60,7 +69,7 @@ public class queue {
 	     if (isEmpty())
 	     {
 	         System.out.println("Queue is Empty");
-	         System.exit(-1);
+	         return "";
 	     }
 	     return arr[front];
 	 }

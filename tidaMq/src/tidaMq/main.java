@@ -1,5 +1,6 @@
 package tidaMq;
 
+import java.awt.Window.Type;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,109 +15,103 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 
 class main
 {
-	public static void WriteToFile(File file,String s) {
+	public static void useQueue() {
 		
-		try {
-			FileWriter fw = new FileWriter(file, true);
-		    BufferedWriter bw = new BufferedWriter(fw);
-		    bw.write(s);
-		    bw.newLine();
-		    bw.close();
-		} catch (Exception e) {
-			System.out.println(e);
-		}
 	}
 	
-	public static void DeleteAndUpdateToFile(File file, String s) {
-		List<String> list = ReadFromFile(file) ;
+	public static void createQueue() {
 		
-		try {
-		      FileWriter myWriter = new FileWriter(file.getPath());
-		      
-		      for(String li: list) {
-		    	  if( !li.equals(s) ) {
-		    		  System.out.println(li);
-		    		  myWriter.write(li) ;
-		    		  myWriter.write(System.lineSeparator()) ;
-		    		 
-		    	  }
-		      }
-		      myWriter.close();
-		    } catch (IOException e) {
-		      System.out.println("An error occurred.");
-		      e.printStackTrace();
-		    }
-	}
-	
-	public static List<String> ReadFromFile(File file) {
-		List<String> list = new ArrayList<String>();
-		
-		try {
-		      Scanner myReader = new Scanner(file);
-		      while (myReader.hasNextLine()) {
-		        String data = myReader.nextLine();
-		        list.add(data) ;
-		        System.out.println(data);
-		      }
-		      myReader.close();
-		    } catch (FileNotFoundException e) {
-		      System.out.println("An error occurred.");
-		      e.printStackTrace();
-		    }
-		
-		return list ;
 	}
 	
 	 public static void main (String[] args) throws IOException
 	 {
-		 File myfile = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/queue1.txt"); 
-		 queue q = new queue(10) ;
-		 List<String> list = new ArrayList<String>();
+//		 List<queue> listQueue = new ArrayList<>();
+//		 queue q = new 	queue() ; 
+		 QueueNow queueNow =new QueueNow() ;
 		 
-		 if(!myfile.createNewFile()) {
-			 list = ReadFromFile(myfile);
-			 for(String s: list) {
-				 q.enqueue(s) ;
-			 }
-			 
-		 }
-		 
+		//Creating a File object for directory
+	      File directoryPath = new File("/home/buidat/eclipse-workspacjava /tidaMqFile");
+	      //List of all files and directories
+	      File filesList[] = directoryPath.listFiles();
+	      System.out.println("List of files and directories in the specified directory:");
+	      for(File file : filesList) {
+	    	  WriteToDiskThread read = new WriteToDiskThread();
+	    	  
+	    	  List<String> list = read.ReadFromFile(file);
+	    	  String fileName = file.getName() ;
+	    	  queue nq = new queue(list.size(), fileName.split("\\.")[0], "1");
+	    	  
+	    	  for(String s:list) {
+	    		  nq.enqueue(s);
+	    	  }
+	    	  queueNow.listQueue.add(nq) ;
+	    	  System.out.println(file.getName()) ;
+	      }
+		
 		 
 	     while(true) {
 	    	 String str ;
 	    	 Scanner sc = new Scanner(System.in) ;
 	    	 str = sc.nextLine() ; 
 	    	 
+			 ExecutorService executor = Executors.newSingleThreadExecutor();
+	    	 
 	    	 str= str.trim() ;
 	    	 String[] arg = str.split(" ") ; 
 	    	 
 	    	 switch (arg[0]) {
+	    	 	case "create":
+	    	 		queue newque = new queue(Integer.parseInt(arg[1]), arg[2], arg[3]) ;
+	    	 		
+	    	 		if( newque.persistent ) {
+	    	 			File myfile0 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ arg[2] + ".txt"); 
+	    	 		}
+	    	 		queueNow.listQueue.add(newque) ;
+	    	 		queueNow.setQueue(arg[2]);
+	    	 		break ;
+	    	 	case "use":
+	    	 		queueNow.setQueue(arg[1]) ;
+	    	 		break ;
 				case "add":
-					q.enqueue(arg[1]);
-					WriteToFile(myfile,arg[1]);
+					queueNow.addToQueue(arg, executor);
 					break;
 				case "pop":
-					String val = q.dequeue();
-					System.out.println(val) ;
-					DeleteAndUpdateToFile(myfile,val) ;
+					queueNow.popQueue(arg, executor) ;
 					break;
 				case "get":
-					System.out.println(q.peek());
+					queueNow.peekQueue() ;
 					break;
 				case "list":
-					q.list();
+					queueNow.list();
 					break;
+				case "listAll":
+					for(queue q2 : queueNow.listQueue) {
+						System.out.println(q2.name);
+					}
+					break ;
+				case "delete": 
+					queueNow.deleteQueue(arg[1],executor);
+					break ;
 				default:
 					System.out.println("Sai cú pháp, mời nhập lại");
 					break;
 			}
-	    	 
-	    	 
-	     }
+	    	executor.shutdown() ;
+	    	
+    	    while (!executor.isTerminated()) {
+    	    	System.out.println("thread running..");
+            }
+	    	
+	     } 
+	     
+	    
+	     
 	 }
 }

@@ -1,0 +1,14 @@
+package tidaMq;
+
+public class thread1 extends Thread {
+	public void run() {
+        System.out.println("thread is running...");
+    }
+ 
+    public static void main(String args[]) {
+        thread1 m1 = new thread1();
+        Thread t1 = new Thread(m1);
+        t1.start();
+    }
+
+}
