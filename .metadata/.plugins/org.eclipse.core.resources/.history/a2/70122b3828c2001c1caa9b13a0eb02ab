@@ -1,0 +1,94 @@
+package tidaMq.server;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
+import tidaMq.server.queue.queue;
+
+public class QueueNow extends queue {
+	public queue q ;
+	public static List<queue> listQueue =new ArrayList<>()  ;
+	
+	public void createNewQueue(String[] arg) {
+		queue newque = new queue(Integer.parseInt(arg[1]), arg[2], arg[3]) ;
+ 		
+ 		if( newque.persistent ) {
+ 			File myfile0 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ arg[2] + ".txt"); 
+ 		}
+ 		listQueue.add(newque) ;
+ 		setQueue(arg[2]);
+	}
+	
+	public void setQueue(String arg){
+		boolean found = false;
+ 		for(queue qu: listQueue) {
+ 			System.out.println(qu.name) ;
+ 			if(qu.name.equals(arg)) {
+ 				this.q=qu ; 
+ 				System.out.println("use queue "+ q.name) ;
+ 				found=true;
+ 				break;
+ 			}
+ 		}
+ 		if(!found) System.out.println("queue not found") ;
+	}
+	
+	public void addToQueue(String[] arg, ExecutorService executor) {
+		File myfile = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ q.name + ".txt");
+		
+		if(q.capacity>=q.count) {
+			if( q.persistent ) {
+				Runnable writeDisk = new WriteToDiskThread("writedisk", myfile,arg[1]);
+				executor.execute(writeDisk) ;	
+			}
+			
+			q.enqueue(arg[1]);
+		}else {
+			System.out.println("Queue is Full");
+		}
+	}
+	
+	public void popQueue(String[] arg, ExecutorService executor) {
+		if(q.count!=0) {
+			File myfile1 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ q.name + ".txt");
+			if( q.persistent ) {
+				Runnable popDisk = new WriteToDiskThread("deleteDisk", myfile1,"");
+				executor.execute(popDisk) ;
+			}
+			String val = q.dequeue();
+			System.out.println(val) ;
+		}else {
+			System.out.println("queue is empty") ;
+		}
+	}
+	
+	public void peekQueue() {
+		if(q.count!=0) {
+			System.out.println(q.peek());
+		}else {
+			System.out.println("queue is empty");
+		}
+	}
+	
+	public void listQueue() {
+		q.list();
+	}
+	
+	public void deleteQueue(String s,ExecutorService executor) {
+		File myfile2 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ s + ".txt");
+		
+		if(q.persistent) {
+			Runnable deleteFile = new WriteToDiskThread("deleteFile", myfile2,"");
+			executor.execute(deleteFile) ;
+		}
+		
+		for(queue q3: listQueue) {
+			if( q3.name.equals(s) ) {
+				listQueue.remove(q3) ;
+			}
+		}
+		
+	}
+}
