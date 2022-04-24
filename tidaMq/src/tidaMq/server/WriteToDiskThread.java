@@ -66,7 +66,7 @@ public class WriteToDiskThread implements Runnable {
 		System.out.println("dcdc");
 		
 	}
-	
+	  
 	
 	
 	public static void DeleteAndUpdateToFile(File file) {

@@ -9,32 +9,37 @@ public class QueueNow extends queue {
 	public queue q ;
 	public static List<queue> listQueue =new ArrayList<>()  ;
 	
-	public void createNewQueue(String[] arg) {
+	public String createNewQueue(String[] arg) {
 		queue newque = new queue(Integer.parseInt(arg[1]), arg[2], arg[3]) ;
- 		
+		
  		if( newque.persistent ) {
  			File myfile0 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ arg[2] + ".txt"); 
  		}
  		listQueue.add(newque) ;
  		setQueue(arg[2]);
+ 		return "success create"; 
 	}
 	
-	public void setQueue(String arg){
+	public String setQueue(String arg){
 		boolean found = false;
+		String res = "";
  		for(queue qu: listQueue) {
  			System.out.println(qu.name) ;
  			if(qu.name.equals(arg)) {
  				this.q=qu ; 
  				System.out.println("use queue "+ q.name) ;
  				found=true;
+ 				res = "use queue "+ q.name ;
  				break;
  			}
  		}
- 		if(!found) System.out.println("queue not found") ;
+ 		if(!found) return "queue not found" ;
+ 		return res;
 	}
 	
-	public void addToQueue(String[] arg, ExecutorService executor) {
+	public String addToQueue(String[] arg, ExecutorService executor) {
 		File myfile = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ q.name + ".txt");
+		String res= "" ;
 		
 		if(q.capacity>=q.count) {
 			if( q.persistent ) {
@@ -43,9 +48,11 @@ public class QueueNow extends queue {
 			}
 			
 			q.enqueue(arg[1]);
+			res= "add " + arg[1] + "to queue" ;
 		}else {
-			System.out.println("Queue is Full");
+			return "Queue is Full" ;
 		}
+		return res; 
 	}
 	
 	public void popQueue(String[] arg, ExecutorService executor) {
@@ -62,12 +69,16 @@ public class QueueNow extends queue {
 		}
 	}
 	
-	public void peekQueue() {
+	public String peekQueue() {
+		String res = "" ;
 		if(q.count!=0) {
 			System.out.println(q.peek());
+			res= q.peek() ;
 		}else {
-			System.out.println("queue is empty");
+			res= "queue is empty";
 		}
+		
+		return res; 
 	}
 	
 	public void listQueue() {

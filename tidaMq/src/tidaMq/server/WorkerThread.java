@@ -1,7 +1,10 @@
 package tidaMq.server;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -19,40 +22,45 @@ public class WorkerThread extends Thread {
     public void run() {
         System.out.println("Processing: " + socket);
         try {
-            OutputStream os = socket.getOutputStream();
-            InputStream is = socket.getInputStream();
+        	
             while (true) {
-                int ch = is.read(); // Receive data from client
-                if (ch == -1) {
-                    break;
-                }
-                System.out.println(ch) ;
-                String str= String.valueOf(ch).trim() ;
-   	    	 	String[] arg = str.split(" ") ; 
+            	//Tạo input stream, nối tới Socket
+                BufferedReader inFromClient =new BufferedReader(new InputStreamReader(socket.getInputStream())); 
+                
+                //Tạo outputStream, nối tới socket
+                DataOutputStream outToClient = new DataOutputStream(socket.getOutputStream());
+            	 //Đọc thông tin từ socket
+                String sentence_from_client = inFromClient.readLine();
+                
+                String  sentence_to_client = "";
+//              
+   	    	 	String[] arg = sentence_from_client.split(" ") ; 
+   	    	 	System.out.println(arg);
                 
    	    	 	ExecutorService executor = Executors.newSingleThreadExecutor();
    	    	 	
                 switch (arg[0]) {
 	    	 	case "create":
-	    	 		queueNow.createNewQueue(arg) ;
+	    	 		sentence_to_client = queueNow.createNewQueue(arg) ;
 	    	 		break ;
 	    	 	case "use":
-	    	 		queueNow.setQueue(arg[1]) ;
+	    	 		sentence_to_client = queueNow.setQueue(arg[1]) ;
 	    	 		break ;
 				case "add":
-					queueNow.addToQueue(arg, executor);
+					sentence_to_client= queueNow.addToQueue(arg, executor);
 					break;
 				case "pop":
 					queueNow.popQueue(arg, executor) ;
 					break;
 				case "get":
-					queueNow.peekQueue() ;
+					sentence_to_client =queueNow.peekQueue() ;
 					break;
 				case "list":
 					queueNow.list();
 					break;
 				case "listAll":
 					for(queue q2 : queueNow.listQueue) {
+						sentence_to_client+= q2.name +" " ;
 						System.out.println(q2.name);
 					}
 					break ;
@@ -60,11 +68,12 @@ public class WorkerThread extends Thread {
 					queueNow.deleteQueue(arg[1],executor);
 					break ;
 				default:
-					System.out.println("Sai cú pháp, mời nhập lại");
+					sentence_to_client = "Sai cú pháp, mời nhập lại";
 					break;
 			}
                 
-                os.write(ch); // Send the results to client
+              //ghi dữ liệu ra socket
+               outToClient.writeBytes(sentence_to_client +'\n'); 
             }
         } catch (IOException e) {
             System.err.println("Request Processing Error: " + e);
