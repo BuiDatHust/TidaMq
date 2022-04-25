@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 public class QueueNow extends queue {
 	public queue q ;
 	public static List<queue> listQueue =new ArrayList<>()  ;
-	
+	 
 	public String createNewQueue(String[] arg) {
 		queue newque = new queue(Integer.parseInt(arg[1]), arg[2], arg[3]) ;
 		
@@ -37,7 +37,7 @@ public class QueueNow extends queue {
  		return res;
 	}
 	
-	public String addToQueue(String[] arg, ExecutorService executor) {
+	public String addToQueue(String[] arg, ExecutorService executor) throws InterruptedException {
 		File myfile = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ q.name + ".txt");
 		String res= "" ;
 		
@@ -55,7 +55,7 @@ public class QueueNow extends queue {
 		return res; 
 	}
 	
-	public void popQueue(String[] arg, ExecutorService executor) {
+	public void popQueue(String[] arg, ExecutorService executor) throws InterruptedException {
 		if(q.count!=0) {
 			File myfile1 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ q.name + ".txt");
 			if( q.persistent ) {

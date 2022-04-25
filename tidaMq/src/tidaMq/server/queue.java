@@ -1,5 +1,7 @@
 package tidaMq.server;
 
+import java.io.IOException;
+
 public class queue {
 	 private String[] arr;      
 	 private int front;      
@@ -10,7 +12,7 @@ public class queue {
 	 public boolean persistent ;
 	
 	 queue(int size,String n,String p)
-	 {
+	 { 
 		 
 	     arr = new String[size];
 	     capacity = size;
@@ -27,14 +29,16 @@ public class queue {
 	 }
 
 	
-	 public String dequeue()
+	 public synchronized String dequeue() throws InterruptedException
 	 {
 	     
 	     if (isEmpty())
 	     {
 	         System.out.println("Queue is Empty");
+	         wait();
 	         return "";
 	     }
+	     notifyAll();
 
 	     String x = arr[front];
 
@@ -47,12 +51,13 @@ public class queue {
 	 }
 
 	 
-	 public void enqueue(String item)
+	 public synchronized void enqueue(String item) throws InterruptedException
 	 {
 	     
 	     if (isFull())
 	     {
 	         System.out.println("Queue is Full");
+	         wait();
 	         return  ;
 	     }
 

@@ -63,7 +63,7 @@ public class WorkerThread extends Thread {
 						sentence_to_client+= q2.name +" " ;
 						System.out.println(q2.name);
 					}
-					break ;
+					break ; 
 				case "delete": 
 					queueNow.deleteQueue(arg[1],executor);
 					break ;
@@ -77,7 +77,10 @@ public class WorkerThread extends Thread {
             }
         } catch (IOException e) {
             System.err.println("Request Processing Error: " + e);
-        }
+        } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         System.out.println("Complete processing: " + socket);
     }
 }

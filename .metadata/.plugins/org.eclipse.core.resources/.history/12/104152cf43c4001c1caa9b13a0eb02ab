@@ -1,0 +1,32 @@
+package tidaMq.SynchornizeThread;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+public class BlockingQueue<T> {
+    private static final int compacity = 10;
+    private final List<T> items = new ArrayList()<>();
+ 
+    public synchronized void put(T value) throws InterruptedException {
+        while (items.size() == compacity) {
+            System.out.println("Queue is full");
+            wait();
+        }
+        items.add(value);
+        notifyAll();
+    }
+ 
+    public synchronized T take() throws InterruptedException {
+        while (items.size() == 0) {
+            System.out.println("Queue is empty");
+            wait();
+        }
+        notifyAll();
+        return items.removeFirst();
+    }
+     
+    public synchronized int size() {
+        return items.size();
+    }
+}

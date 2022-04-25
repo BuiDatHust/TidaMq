@@ -27,7 +27,7 @@ class server
 	public final static int SERVER_PORT = 3000;
 	public static final int NUM_OF_THREAD = 4;
 	
-	 public static void server () throws IOException
+	 public static void server () throws IOException, InterruptedException
 	 {
 		 QueueNow queueNow =new QueueNow() ;
 		 
@@ -82,7 +82,7 @@ class server
 	     
 	 }
 	 
-	 public static void main(String[] args)  throws IOException {
+	 public static void main(String[] args)  throws IOException, InterruptedException {
 		server();
 	}
 }

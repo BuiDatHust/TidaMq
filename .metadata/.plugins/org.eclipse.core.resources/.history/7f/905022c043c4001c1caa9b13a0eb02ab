@@ -1,0 +1,5 @@
+package tidaMq.SynchornizeThread;
+
+public class BlockingQueue {
+
+}
