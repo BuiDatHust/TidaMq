@@ -23,7 +23,7 @@ public class WriteToDiskThread implements Runnable {
 		this.file = file ;
 		this.value= val ;
 	}
-	
+	 
 	public WriteToDiskThread() {
 		
 	}
@@ -63,7 +63,6 @@ public class WriteToDiskThread implements Runnable {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		System.out.println("dcdc");
 		
 	}
 	  
@@ -87,7 +86,6 @@ public class WriteToDiskThread implements Runnable {
 		      System.out.println("An error occurred.");
 		      e.printStackTrace();
 		    }
-		System.out.println("dcdc csc");
 	}
 	
 	public static List<String> ReadFromFile(File file) {

@@ -1,4 +1,11 @@
 eclipse.preferences.version=1
+org.eclipse.jdt.core.classpathVariable.JRE_LIB=/usr/lib/jvm/java-11-openjdk-amd64/lib/jrt-fs.jar
+org.eclipse.jdt.core.classpathVariable.JRE_SRC=
+org.eclipse.jdt.core.classpathVariable.JRE_SRCROOT=
+org.eclipse.jdt.core.classpathVariable.JUNIT_HOME=/home/buidat/.p2/pool/plugins/org.junit_4.13.2.v20211018-1956.jar
+org.eclipse.jdt.core.classpathVariable.M2_REPO=/home/buidat/.m2/repository
+org.eclipse.jdt.core.classpathVariable.ccdc=javac TestPerson
+org.eclipse.jdt.core.classpathVariable.junit=set classpath\=%classpath%;.;junit.jar 
 org.eclipse.jdt.core.codeComplete.visibilityCheck=enabled
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=11

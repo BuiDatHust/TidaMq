@@ -1,0 +1,20 @@
+package tidaMq.server.unitTest;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+import tidaMq.server.QueueNow;
+
+public class queueNowTest {
+	QueueNow qn = new QueueNow() ;
+	
+	@Test()
+	public void testCreateQueue() {
+		String[] arr = { "create", "5", "cdc","1" };
+		assertEquals("Ok", qn.createNewQueue(arr));
+	}
+}

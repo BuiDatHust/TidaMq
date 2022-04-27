@@ -1,0 +1,8 @@
+
+#server
+PATHFILE = /home/buidat/eclipse-workspacjava /tidaMqFile/
+
+#queue
+EMPTYQUEUE = "Queue is Empty"
+FULLQUEUE = "Queue is Full"
+QUEUENOTFOUND = "Queue not Found"

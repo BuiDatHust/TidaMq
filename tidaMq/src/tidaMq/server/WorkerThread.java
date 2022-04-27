@@ -7,16 +7,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class WorkerThread extends Thread {
 	private Socket socket;
 	QueueNow queueNow ;
+	List<Socket> sockets ;
 	 
     public WorkerThread(Socket socket,QueueNow q) {
         this.socket = socket;
         this.queueNow = q ;
+        
     }
  
     public void run() {
@@ -32,8 +35,8 @@ public class WorkerThread extends Thread {
             	 //Đọc thông tin từ socket
                 String sentence_from_client = inFromClient.readLine();
                 
-                String  sentence_to_client = "";
-//              
+                String  sentence_to_client = "dcdc";
+                
    	    	 	String[] arg = sentence_from_client.split(" ") ; 
    	    	 	System.out.println(arg);
                 
@@ -48,20 +51,21 @@ public class WorkerThread extends Thread {
 	    	 		break ;
 				case "add":
 					sentence_to_client= queueNow.addToQueue(arg, executor);
+
+					System.out.println(sentence_from_client);
 					break;
 				case "pop":
-					queueNow.popQueue(arg, executor) ;
+					sentence_to_client =queueNow.popQueue(arg, executor) ;
 					break;
 				case "get":
 					sentence_to_client =queueNow.peekQueue() ;
 					break;
 				case "list":
-					queueNow.list();
+					sentence_to_client = queueNow.listQueue();
 					break;
 				case "listAll":
 					for(queue q2 : queueNow.listQueue) {
-						sentence_to_client+= q2.name +" " ;
-						System.out.println(q2.name);
+						sentence_to_client+= q2.name + " " ;
 					}
 					break ; 
 				case "delete": 

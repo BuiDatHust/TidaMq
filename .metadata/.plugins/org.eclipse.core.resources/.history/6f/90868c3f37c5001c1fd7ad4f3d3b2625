@@ -1,0 +1,5 @@
+package tidaMq.server.config;
+
+public class GetConfigValue {
+
+}

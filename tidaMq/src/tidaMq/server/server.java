@@ -20,6 +20,8 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import tidaMq.server.config.GetConfigValue;
+
 
 
 class server
@@ -27,12 +29,15 @@ class server
 	public final static int SERVER_PORT = 3000;
 	public static final int NUM_OF_THREAD = 4;
 	
-	 public static void server () throws IOException, InterruptedException
+	 public static void startserver () throws IOException, InterruptedException
 	 {
 		 QueueNow queueNow =new QueueNow() ;
+		 List<Socket> sockets  = new ArrayList<>();
+		 
+		 GetConfigValue config = new GetConfigValue() ;
 		 
 		//Creating a File object for directory
-	      File directoryPath = new File("/home/buidat/eclipse-workspacjava /tidaMqFile");
+	      File directoryPath = new File(config.getPropertyValue("PATHFILE"));
 	      //List of all files and directories
 	      File filesList[] = directoryPath.listFiles();
 	      System.out.println("List of files and directories in the specified directory:");
@@ -62,8 +67,9 @@ class server
 	            while (true) {
 	                try {
 	                    Socket socket = serverSocket.accept();
+	                    sockets.add(socket) ;
 	                    System.out.println("Client accepted: " + socket);
-	 
+	                    
 	                    WorkerThread handler = new WorkerThread(socket,queueNow);
 	                    executor.execute(handler);
 	                } catch (IOException e) {
@@ -83,6 +89,6 @@ class server
 	 }
 	 
 	 public static void main(String[] args)  throws IOException, InterruptedException {
-		server();
+		startserver();
 	}
 }

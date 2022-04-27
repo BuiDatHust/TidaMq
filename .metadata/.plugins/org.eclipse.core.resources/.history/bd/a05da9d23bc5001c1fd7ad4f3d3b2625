@@ -1,0 +1,5 @@
+pathFile = /home/buidat/eclipse-workspacjava /tidaMqFile/
+db.host=appdomain.java2novice.com
+db.user=java2novice
+db.password=mypassword
+db.service=orcl

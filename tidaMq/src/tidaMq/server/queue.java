@@ -2,6 +2,8 @@ package tidaMq.server;
 
 import java.io.IOException;
 
+import tidaMq.server.config.GetConfigValue;
+
 public class queue {
 	 private String[] arr;      
 	 private int front;      
@@ -10,6 +12,7 @@ public class queue {
 	 public int count;   
 	 public String name ;
 	 public boolean persistent ;
+	 public GetConfigValue config = new GetConfigValue() ;
 	
 	 queue(int size,String n,String p)
 	 { 
@@ -18,7 +21,7 @@ public class queue {
 	     capacity = size;
 	     front = 0;
 	     rear = -1;
-	     count = 0;
+	     count = 0;  
 	     name= n;
 	     persistent = p.equals("0") ? false : true ;
 	 
@@ -34,11 +37,11 @@ public class queue {
 	     
 	     if (isEmpty())
 	     {
-	         System.out.println("Queue is Empty");
-	         wait();
-	         return "";
+	         System.out.println(config.getPropertyValue("FULLQUEUE"));
+//	         wait();
+	         return config.getPropertyValue("FULLQUEUE") ;
 	     }
-	     notifyAll();
+//	     notifyAll();
 
 	     String x = arr[front];
 
@@ -51,14 +54,14 @@ public class queue {
 	 }
 
 	 
-	 public synchronized void enqueue(String item) throws InterruptedException
+	 public synchronized String enqueue(String item) throws InterruptedException
 	 {
 	     
 	     if (isFull())
 	     {
-	         System.out.println("Queue is Full");
-	         wait();
-	         return  ;
+	         System.out.println(config.getPropertyValue("FULLQUEUE") );
+//	         wait();
+	         return config.getPropertyValue("FULLQUEUE") ; 
 	     }
 
 	     System.out.println("Inserting " + item);
@@ -66,6 +69,7 @@ public class queue {
 	     rear = (rear + 1) % capacity;
 	     arr[rear] = item;
 	     count++;
+	     return item ;
 	 }
 
 	 
@@ -73,7 +77,7 @@ public class queue {
 	 {
 	     if (isEmpty())
 	     {
-	         System.out.println("Queue is Empty");
+	         System.out.println(config.getPropertyValue("EMPTYQUEUE") );
 	         return "";
 	     }
 	     return arr[front];
@@ -84,10 +88,13 @@ public class queue {
 	     return count;
 	 }
 	 
-	 public void list() {
-		 for(int i=0 ;i<size(); i++) {
-			 System.out.println(arr[i]);
+	 public String list() {
+		 String res = "";
+		 for(int i=front ;i<=rear; i++) {
+			 res+= arr[i]+ " ";
 		 }
+		 
+		 return res; 
 	 }
 
 	 

@@ -13,7 +13,7 @@ public class Producer {
     public final static int SERVER_PORT = 3000;
   
     public static void main(String[] args) throws IOException, InterruptedException {
-        Socket socket = null;
+        Socket socket = null; 
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT); // Connect to server
             System.out.println("Connected: " + socket);

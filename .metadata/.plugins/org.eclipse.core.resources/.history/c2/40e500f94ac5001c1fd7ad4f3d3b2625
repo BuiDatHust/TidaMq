@@ -1,0 +1,16 @@
+package tidaMq.server.unitTest;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+import tidaMq.server.QueueNow;
+
+public class queueNowTest {
+	QueueNow qn = new QueueNow() ;
+	
+	@Test()
+	void test1() {
+		assertEquals(0, 0);
+	}
+}

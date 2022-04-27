@@ -1,95 +1,106 @@
 package tidaMq.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
+import tidaMq.server.config.GetConfigValue;
+
 public class QueueNow extends queue {
-	public queue q ;
+	public static queue q ;
 	public static List<queue> listQueue =new ArrayList<>()  ;
-	 
-	public String createNewQueue(String[] arg) {
+	public static GetConfigValue config = new GetConfigValue() ;
+	
+	public static String createNewQueue(String[] arg) {
 		queue newque = new queue(Integer.parseInt(arg[1]), arg[2], arg[3]) ;
 		
  		if( newque.persistent ) {
- 			File myfile0 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ arg[2] + ".txt"); 
- 		}
+ 			File myfile0 = new File(config.getPropertyValue("PATHFILE")+ arg[2] + ".txt"); 
+ 		} 
  		listQueue.add(newque) ;
  		setQueue(arg[2]);
- 		return "success create"; 
-	}
+ 		return "Ok"; 
+	} 
 	
-	public String setQueue(String arg){
+	public static String setQueue(String arg){ 
 		boolean found = false;
 		String res = "";
  		for(queue qu: listQueue) {
  			System.out.println(qu.name) ;
  			if(qu.name.equals(arg)) {
- 				this.q=qu ; 
+ 				q=qu ; 
  				System.out.println("use queue "+ q.name) ;
  				found=true;
- 				res = "use queue "+ q.name ;
+ 				res += q.name ;
  				break;
  			}
  		}
- 		if(!found) return "queue not found" ;
+ 		if(!found) return config.getPropertyValue("QUEUENOTFOUND") ;
  		return res;
 	}
 	
-	public String addToQueue(String[] arg, ExecutorService executor) throws InterruptedException {
-		File myfile = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ q.name + ".txt");
+	public static String addToQueue(String[] arg, ExecutorService executor) throws InterruptedException {
+		File myfile = new File(config.getPropertyValue("PATHFILE")+ q.name + ".txt");
 		String res= "" ;
 		
-		if(q.capacity>=q.count) {
+		if(!q.isFull()) {
 			if( q.persistent ) {
-				Runnable writeDisk = new WriteToDiskThread("writedisk", myfile,arg[1]);
+				Runnable writeDisk = new WriteToDiskThread(config.getPropertyValue("WRITE"), myfile,arg[1]);
 				executor.execute(writeDisk) ;	
 			}
 			
 			q.enqueue(arg[1]);
-			res= "add " + arg[1] + "to queue" ;
+			res= arg[1]  ;
 		}else {
-			return "Queue is Full" ;
+			return config.getPropertyValue("FULLQUEUE") ;
 		}
 		return res; 
 	}
 	
-	public void popQueue(String[] arg, ExecutorService executor) throws InterruptedException {
-		if(q.count!=0) {
+	public static String popQueue(String[] arg, ExecutorService executor) throws InterruptedException {
+		String val = q.dequeue();
+		if(!q.isEmpty()) {
 			File myfile1 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ q.name + ".txt");
 			if( q.persistent ) {
-				Runnable popDisk = new WriteToDiskThread("deleteDisk", myfile1,"");
+				Runnable popDisk = new WriteToDiskThread(config.getPropertyValue("DELETE"), myfile1,"");
 				executor.execute(popDisk) ;
 			}
-			String val = q.dequeue();
+			
 			System.out.println(val) ;
+			return val ; 
 		}else {
-			System.out.println("queue is empty") ;
+			System.out.println(config.getPropertyValue("EMPTYQUEUE")) ;
 		}
+		
+		return val ; 
 	}
 	
 	public String peekQueue() {
 		String res = "" ;
-		if(q.count!=0) {
+		if(!q.isEmpty()) {
 			System.out.println(q.peek());
 			res= q.peek() ;
 		}else {
-			res= "queue is empty";
+			res= config.getPropertyValue("EMPTYQUEUE");
 		}
 		
 		return res; 
 	}
 	
-	public void listQueue() {
-		q.list();
+	public static String listQueue() {
+		return q.list();
 	}
 	
-	public void deleteQueue(String s,ExecutorService executor) {
+	public static void deleteQueue(String s,ExecutorService executor) {
 		File myfile2 = new File("/home/buidat/eclipse-workspacjava /tidaMqFile/"+ s + ".txt");
 		
 		if(q.persistent) {
-			Runnable deleteFile = new WriteToDiskThread("deleteFile", myfile2,"");
+			Runnable deleteFile = new WriteToDiskThread(config.getPropertyValue("DELETEFILE"), myfile2,"");
 			executor.execute(deleteFile) ;
 		}
 		
